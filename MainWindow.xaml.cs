@@ -21,47 +21,48 @@ namespace ImageTiles
     public partial class MainWindow : Window
     {
         ImagesStore imagesStore;
-        ImageGridNode rootNode;
+        GridDrawer drawer;
+        GridNodesScaler scaler;
+        GridNode rootNode;
         public MainWindow()
         {
+            int width = 1000;
+            
 
             imagesStore = new();
+
             rootNode = new();
             rootNode.AddLeaf(1);
+            var br1 = rootNode.AddBranch();
+            br1.AddLeaf(2);
+            br1.AddLeaf(3);
+
+
+            scaler = new(
+                imagesStore: imagesStore,
+                rootNode: rootNode);
+
+            drawer = new(
+                imagesStore,
+                startX: 0,
+                startY: 0,
+                horizontalCompletion: true,
+                paddingTop: 5,
+                paddingBottom: 10,
+                paddingLeft: 5,
+                paddingRight: 10);
+
             InitializeComponent();
         }
 
-        void DrawImageGrid(SKCanvas canvas, ImageGridNode rootNode, int startX, int startY, int tileWidth, int tileHeight)
-        {
-            DrawNode(canvas, rootNode, startX, startY, tileWidth, tileHeight);
 
-            foreach (var child in rootNode.childs)
-            {
-                DrawImageGrid(canvas, child, startX, startY + tileHeight, tileWidth, tileHeight);
-                startX += tileWidth;
-            }
-        }
-
-        void DrawNode(SKCanvas canvas, ImageGridNode node, int x, int y, int width, int height)
-        {
-            if (node.imageUid < 0) 
-                return;
-
-            using var image = imagesStore.GetImage(node.imageUid);
-            if (image != null)
-            {
-                canvas.DrawImage(image, new SKRect(x, y, x + width, y + height));
-            }
-        }
-
-        //// You need to call this method in your SkiaSharp paint event
         void OnPaintSurface(object sender, SKPaintSurfaceEventArgs e)
         {
             var canvas = e.Surface.Canvas;
 
             // Clear the canvas
             canvas.Clear(SKColors.White);
-            DrawImageGrid(canvas, rootNode, 0, 0, 100, 100); // Example tile size 100x100
+            drawer.DrawImageGrid(canvas, rootNode); // Example tile size 100x100
         }
     }
 }

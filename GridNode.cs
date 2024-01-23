@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace ImageTiles
 {
-    internal class ImageGridNode
+    internal class GridNode
     {
         public int imageUid;
-        public float height, width;
-        public List<ImageGridNode> childs { get; } = new();
-        public bool isLeaf { get { return ((childs == null) || (childs.Count == 0)); } }
+        public int height, width;
+        public List<GridNode> childs { get; } = new();
+        public bool isLeaf { get { return imageUid > 0; } }
         public bool noBranchesInChilds
         {
             get
@@ -24,22 +24,32 @@ namespace ImageTiles
                 return true;
             }
         }
-        public ImageGridNode(int imageUid = -1)
+        public GridNode(int imageUid = -1)
         {
             this.imageUid = imageUid;
         }
 
-        public ImageGridNode AddLeaf(int imageUid)
+        public GridNode AddLeaf(int imageUid)
         {
-            childs.Add(new ImageGridNode(imageUid));
+            if (this.isLeaf)
+            {
+                throw new Exception("Cannot add child to leaf");
+            }
+            childs.Add(new GridNode(imageUid));
             return this;
         }
 
-        public ImageGridNode AddBranch()
+        public GridNode AddBranch()
         {
-            var newNode = new ImageGridNode();
+            var newNode = new GridNode();
             childs.Add(newNode);
             return newNode;
         }
+    }
+
+    internal class ImageGridNodeState
+    {
+        public bool Flag { get; set; }
+        // Другие свойства состояния
     }
 }

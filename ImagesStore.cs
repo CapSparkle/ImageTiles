@@ -59,6 +59,12 @@ namespace ImageTiles
             }
         }
 
+        public (int, int) GetWidthAndHeightOfImage(int imageUid)
+        {
+            var img = GetImage(imageUid);
+            return (img.Width, img.Height);
+        }
+
         public SKImage? GetImage(int imageUid)
         {
             var filePath = GetPathByUID(imageUid);
