@@ -69,7 +69,7 @@ namespace ImageTiles
                 imgUidToDraw = 1;
             //add img filler
 
-            using var image = imagesStore.GetImage(imgUidToDraw);
+            var image = imagesStore.GetImage(imgUidToDraw);
             if (image != null)
             {
                 canvas.DrawImage(image, new SKRect(
@@ -77,7 +77,11 @@ namespace ImageTiles
                     currentY + padding.Up, 
                     currentX + padding.Left + node.width, 
                     currentY + padding.Up + node.height));
+
+                image.Dispose();
             }
+
+            
 
             if (verticalCompletion)
             {

@@ -30,26 +30,30 @@ namespace ImageTiles
             imagesStore = new();
 
             rootNode = new();
-            rootNode.AddLeaf(1);
-            var br1 = rootNode.AddBranch();
-            br1.AddLeaf(2);
-            br1.AddLeaf(3);
-            var br2 = br1.AddBranch();
-            br2.AddLeaf(3);
-            br2.AddLeaf(3);
-            br2.AddLeaf(2);
-            br2.AddLeaf(5);
 
-            rootNode.AddLeaf(5);
-            var b3 = rootNode.AddBranch();
-            b3.AddLeaf(4);
-            var b4 = b3.AddBranch();
-            b4.AddLeaf(1);
-            b4.AddLeaf(5);
-            b4.AddLeaf(2);
+            rootNode.AddLeaf(1);
+            
+            var br1 = rootNode.AddBranch();
+            var br11 = br1.AddBranch();
+            br11.AddLeaf(2);
+            br11.AddLeaf(3);
+            br1.AddLeaf(4);
+
+            var b2 = rootNode.AddBranch();
+            b2.AddLeaf(1);
+            var b21 = b2.AddBranch();
+            b21.AddLeaf(7);
+            b21.AddLeaf(6);
+
+            //var b3 = rootNode.AddBranch();
+            //b3.AddLeaf(4);
+            //var b31 = b3.AddBranch();
+            //b31.AddLeaf(1);
+            //b31.AddLeaf(5);
+            //b31.AddLeaf(2);
 
             padding = new(
-                up: 0,
+                up: 8,
                 down: 0,
                 left: 0,
                 right: 0
@@ -61,7 +65,7 @@ namespace ImageTiles
                 imagesStore: imagesStore,
                 rootNode: rootNode,
                 padding: padding,
-                mainLength: 1000,
+                mainLength: 400,
                 verticalCompletion: verticalCompletion);
 
             drawer = new(
@@ -74,9 +78,9 @@ namespace ImageTiles
             InitializeComponent();
         }
 
-
         void OnPaintSurface(object sender, SKPaintSurfaceEventArgs e)
         {
+
             var canvas = e.Surface.Canvas;
 
             // Clear the canvas

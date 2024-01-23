@@ -74,6 +74,32 @@ namespace ImageTiles
             {
                 ProcessNode(completionTypeOfRootNode, rootNode);
             }
+
+            //scale
+            if (completionTypeOfRootNode)
+                rootNode.height = mainLength;
+            else
+                rootNode.height = mainLength;
+
+            AlignNode(completionTypeOfRootNode, rootNode);
+
+            AddPadding(rootNode, padding);
+        }
+
+        private void AddPadding(GridNode rootNode, Padding padding)
+        {
+            if (rootNode.isLeaf)
+            {
+                rootNode.width -= (padding.Left + padding.Right);
+                rootNode.height -= (padding.Up + padding.Bottom);
+            }
+            else
+            {
+                foreach (var child in rootNode.childs)
+                {
+                    AddPadding(child, padding);
+                }
+            }
         }
 
         public void ProcessNode(bool verticalCompletion, GridNode? node = null)
