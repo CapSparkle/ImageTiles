@@ -6,6 +6,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Media.Media3D;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using SkiaSharp;
@@ -23,10 +24,11 @@ namespace ImageTiles
         ImageGridNode rootNode;
         public MainWindow()
         {
-            InitializeComponent();
 
+            imagesStore = new();
             rootNode = new();
             rootNode.AddLeaf(1);
+            InitializeComponent();
         }
 
         void DrawImageGrid(SKCanvas canvas, ImageGridNode rootNode, int startX, int startY, int tileWidth, int tileHeight)
@@ -42,21 +44,14 @@ namespace ImageTiles
 
         void DrawNode(SKCanvas canvas, ImageGridNode node, int x, int y, int width, int height)
         {
-            using var image = LoadImageFromUid(node.imageUid);
+            if (node.imageUid < 0) 
+                return;
+
+            using var image = imagesStore.GetImage(node.imageUid);
             if (image != null)
             {
                 canvas.DrawImage(image, new SKRect(x, y, x + width, y + height));
             }
-        }
-
-        SKImage LoadImageFromUid(int imageUid)
-        {
-            var imgData = imagesStore.GetImageBitMap(imageUid);
-
-            // Adjust the size and position as needed
-            SKRect destRect = new SKRect(0, 0, imgData.Item1.Width, imgData.Item1.Height);
-            canvas.DrawBitmap(imgData.Item1, destRect, imgData.Item2);
-            return null;
         }
 
         //// You need to call this method in your SkiaSharp paint event
@@ -66,8 +61,6 @@ namespace ImageTiles
 
             // Clear the canvas
             canvas.Clear(SKColors.White);
-
-            // Assuming rootNode is your root Node object
             DrawImageGrid(canvas, rootNode, 0, 0, 100, 100); // Example tile size 100x100
         }
     }

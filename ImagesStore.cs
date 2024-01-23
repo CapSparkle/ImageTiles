@@ -12,28 +12,43 @@ namespace ImageTiles
 {
     internal class ImagesStore
     {
-        public string directory { get; set; } = "images";
+        public string directoryName { get; set; } = "images";
+
+        string directoryPath 
+        { 
+            get
+            {
+                return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, directoryName).ToString();
+            } 
+        }
+        string GetPathByUID(int imageUid)
+        {
+            if((uidToNameMap !=  null) && (uidToNameMap.ContainsKey(imageUid))) 
+                return Path.Combine(directoryPath, uidToNameMap[imageUid]).ToString();
+
+            return "";
+        }
         public Dictionary<int, string>? uidToNameMap { get; private set; }
 
-        public ImagesStore(string directory = "")
+        public ImagesStore(string directoryName = "")
         {
-            if(directory != "")
-                this.directory = directory;
+            if(directoryName != "")
+                this.directoryName = directoryName;
 
             LoadImages();
         }
 
         private void LoadImages()
         {
-            if (!Directory.Exists(directory))
+            if (!Directory.Exists(directoryPath))
             {
-                Console.WriteLine($"Directory {directory} does not exist.");
+                Console.WriteLine($"Directory {directoryPath} does not exist.");
                 return;
             }
 
             uidToNameMap = new();
 
-            var imageFiles = Directory.EnumerateFiles(directory, "*.*", SearchOption.TopDirectoryOnly)
+            var imageFiles = Directory.EnumerateFiles(directoryPath, "*.*", SearchOption.TopDirectoryOnly)
                                       .Where(file => file.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase)
                                                   || file.EndsWith(".png", StringComparison.OrdinalIgnoreCase));
 
@@ -44,23 +59,19 @@ namespace ImageTiles
             }
         }
 
-        public (SKBitmap?,SKPaint?) GetImageBitMap(int imageUid)
+        public SKImage? GetImage(int imageUid)
         {
-            if (File.Exists(directory))
+            var filePath = GetPathByUID(imageUid);
+            if (File.Exists(filePath))
             {
-                SKBitmap bitmap;
-                using (var stream = new SKFileStream(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, directory, uidToNameMap[imageUid])))
-                    bitmap = SKBitmap.Decode(stream);
+                SKImage image;
+                using (var stream = new SKFileStream(filePath))
+                    image = SKImage.FromBitmap(SKBitmap.Decode(stream));
 
-                SKPaint paint = new()
-                {
-                    FilterQuality = SKFilterQuality.High
-                };
-
-                return (bitmap, paint);
+                return image;
             }
             else
-                return (null, null);
+                return null;
         }
     }
 }
