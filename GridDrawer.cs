@@ -32,37 +32,38 @@ namespace ImageTiles
         public void DrawImageGrid(SKCanvas canvas, GridNode rootNode, Padding padding)
         {
             this.padding = padding;
-            int currentX = startX,
+            float currentX = startX,
                 currentY = startY;
 
             DrawImageNode(canvas, rootNode, ref currentX, ref currentY, !verticalCompletion);    
         }
 
-        void DrawImageNode(SKCanvas canvas, GridNode rootNode, ref int currentX, ref int currentY, bool verticalCompletion)
+        void DrawImageNode(SKCanvas canvas, GridNode node, ref float currentX, ref float currentY, bool verticalCompletion)
         {
-            if (rootNode.isLeaf) 
+            if (node.isLeaf) 
             {
-                DrawImage(canvas, rootNode, ref currentX, ref currentY, verticalCompletion);
+                DrawImage(canvas, node, ref currentX, ref currentY, verticalCompletion);
             }
             else
             {
-                int newX = currentX,
+
+                float newX = currentX,
                     newY = currentY;
 
                 if (verticalCompletion)
-                    currentY += ((int)rootNode.height + padding.Up + padding.Bottom);
+                    currentY += (node.height + padding.Up + padding.Bottom);
                 else
-                    currentX += ((int)rootNode.width + padding.Left + padding.Right);
+                    currentX += (node.width + padding.Left + padding.Right);
 
                 verticalCompletion = !verticalCompletion;
-                foreach (var child in rootNode.childs)
+                foreach (var child in node.childs)
                 {
                     DrawImageNode(canvas, child, ref newX, ref newY, verticalCompletion);
                 }
             }
         }
 
-        void DrawImage(SKCanvas canvas, GridNode node, ref int currentX, ref int currentY, bool verticalCompletion)
+        void DrawImage(SKCanvas canvas, GridNode node, ref float currentX, ref float currentY, bool verticalCompletion)
         {
             int imgUidToDraw = node.imageUid;
             if (node.imageUid <= 0)
@@ -85,10 +86,10 @@ namespace ImageTiles
 
             if (verticalCompletion)
             {
-                currentY += ((int)node.height + padding.Up + padding.Bottom);
+                currentY += (node.height + padding.Up + padding.Bottom);
             }
             else
-                currentX += ((int)node.width + padding.Left + padding.Right);
+                currentX += (node.width + padding.Left + padding.Right);
         }
 
     }

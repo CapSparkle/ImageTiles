@@ -45,18 +45,25 @@ namespace ImageTiles
             b21.AddLeaf(7);
             b21.AddLeaf(6);
 
-            //var b3 = rootNode.AddBranch();
-            //b3.AddLeaf(4);
-            //var b31 = b3.AddBranch();
-            //b31.AddLeaf(1);
-            //b31.AddLeaf(5);
-            //b31.AddLeaf(2);
+            DrawStoryboard(
+                width: 650, 
+                paddingTop: 5, 
+                paddingRight: 10, 
+                paddingBottom: 15, 
+                paddingLeft: 20
+            );
 
+            
+            InitializeComponent();
+        }
+
+        void DrawStoryboard(int width, int paddingTop, int paddingRight, int paddingBottom, int paddingLeft)
+        {
             padding = new(
-                up: 8,
-                down: 0,
-                left: 0,
-                right: 0
+                up: paddingTop,
+                down: paddingBottom,
+                left: paddingLeft,
+                right: paddingRight
                 );
 
             bool verticalCompletion = false;
@@ -65,7 +72,7 @@ namespace ImageTiles
                 imagesStore: imagesStore,
                 rootNode: rootNode,
                 padding: padding,
-                mainLength: 400,
+                mainLength: width,
                 verticalCompletion: verticalCompletion);
 
             drawer = new(
@@ -74,9 +81,8 @@ namespace ImageTiles
                 startY: 0,
                 verticalCompletion: verticalCompletion
                 );
-
-            InitializeComponent();
         }
+
 
         void OnPaintSurface(object sender, SKPaintSurfaceEventArgs e)
         {
