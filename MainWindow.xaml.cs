@@ -24,11 +24,9 @@ namespace ImageTiles
         GridDrawer drawer;
         GridNodesScaler scaler;
         GridNode rootNode;
+        Padding padding;
         public MainWindow()
         {
-            int width = 1000;
-            
-
             imagesStore = new();
 
             rootNode = new();
@@ -37,20 +35,31 @@ namespace ImageTiles
             br1.AddLeaf(2);
             br1.AddLeaf(3);
 
+            rootNode.AddLeaf(5);
+            rootNode.AddLeaf(4);
+
+            padding = new(
+                up: 5,
+                down: 10,
+                left: 7,
+                right: 15
+                );
+
+            bool verticalCompletion = false;
 
             scaler = new(
                 imagesStore: imagesStore,
-                rootNode: rootNode);
+                rootNode: rootNode,
+                padding: padding,
+                mainLength: 1000,
+                verticalCompletion: verticalCompletion);
 
             drawer = new(
                 imagesStore,
                 startX: 0,
                 startY: 0,
-                horizontalCompletion: true,
-                paddingTop: 5,
-                paddingBottom: 10,
-                paddingLeft: 5,
-                paddingRight: 10);
+                verticalCompletion: verticalCompletion
+                );
 
             InitializeComponent();
         }
@@ -62,7 +71,7 @@ namespace ImageTiles
 
             // Clear the canvas
             canvas.Clear(SKColors.White);
-            drawer.DrawImageGrid(canvas, rootNode); // Example tile size 100x100
+            drawer.DrawImageGrid(canvas, rootNode, padding); // Example tile size 100x100
         }
     }
 }

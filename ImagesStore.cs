@@ -50,7 +50,8 @@ namespace ImageTiles
 
             var imageFiles = Directory.EnumerateFiles(directoryPath, "*.*", SearchOption.TopDirectoryOnly)
                                       .Where(file => file.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase)
-                                                  || file.EndsWith(".png", StringComparison.OrdinalIgnoreCase));
+                                                  || file.EndsWith(".png", StringComparison.OrdinalIgnoreCase)
+                                                  || file.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase));
 
             int uid = 1;
             foreach (var file in imageFiles)

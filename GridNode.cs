@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -47,9 +48,19 @@ namespace ImageTiles
         }
     }
 
-    internal class ImageGridNodeState
+    internal struct Padding
     {
-        public bool Flag { get; set; }
-        // Другие свойства состояния
+        public int Up = 0,
+            Bottom = 0,
+            Left = 0,
+            Right = 0;
+
+        public Padding(int up = 0, int down = 0, int left = 0, int right = 0)
+        {
+            Up = up;
+            Bottom = down;
+            Left = left;
+            Right = right;
+        }
     }
 }

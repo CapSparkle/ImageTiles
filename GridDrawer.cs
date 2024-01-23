@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace ImageTiles
 {
@@ -12,41 +13,29 @@ namespace ImageTiles
         private readonly ImagesStore imagesStore;
 
         int startX, startY;
-        int currentX, currentY;
         bool verticalCompletion = false;
 
-        int
-            paddingTop = 5,
-            paddingBottom = 10,
-            paddingLeft = 5,
-            paddingRight = 15;
+        Padding padding; 
 
         public GridDrawer(ImagesStore imagesStore,
             int startX,
             int startY, 
-            bool horizontalCompletion, 
-            int paddingTop = 0, 
-            int paddingBottom = 0, 
-            int paddingLeft = 0,
-            int paddingRight = 0)
+            bool verticalCompletion
+            )
         {
             this.imagesStore = imagesStore;
             this.startX = startX;
             this.startY = startY;
-            this.currentX = currentX;
-            this.currentY = currentY;
-            this.verticalCompletion = horizontalCompletion;
-            this.paddingTop = paddingTop;
-            this.paddingBottom = paddingBottom;
-            this.paddingLeft = paddingLeft;
-            this.paddingRight = paddingRight;
+            this.verticalCompletion = verticalCompletion;
         }
 
-        public void DrawImageGrid(SKCanvas canvas, GridNode rootNode)
+        public void DrawImageGrid(SKCanvas canvas, GridNode rootNode, Padding padding)
         {
-            currentX = startX;
-            currentY = startY;
-            DrawImageNode(canvas, rootNode, ref currentX, ref currentY, verticalCompletion);    
+            this.padding = padding;
+            int currentX = startX,
+                currentY = startY;
+
+            DrawImageNode(canvas, rootNode, ref currentX, ref currentY, !verticalCompletion);    
         }
 
         void DrawImageNode(SKCanvas canvas, GridNode rootNode, ref int currentX, ref int currentY, bool verticalCompletion)
@@ -59,6 +48,11 @@ namespace ImageTiles
             {
                 int newX = currentX,
                     newY = currentY;
+
+                if (verticalCompletion)
+                    currentY += (rootNode.height + padding.Up + padding.Bottom);
+                else
+                    currentX += (rootNode.width + padding.Left + padding.Right);
 
                 verticalCompletion = !verticalCompletion;
                 foreach (var child in rootNode.childs)
@@ -79,18 +73,18 @@ namespace ImageTiles
             if (image != null)
             {
                 canvas.DrawImage(image, new SKRect(
-                    currentX + paddingLeft, 
-                    currentY + paddingTop, 
-                    currentX + paddingLeft + node.width, 
-                    currentY + paddingTop + node.height));
+                    currentX + padding.Left, 
+                    currentY + padding.Up, 
+                    currentX + padding.Left + node.width, 
+                    currentY + padding.Up + node.height));
             }
 
             if (verticalCompletion)
             {
-                currentY += (node.height + paddingTop + paddingBottom);
+                currentY += (node.height + padding.Up + padding.Bottom);
             }
             else
-                currentX += (node.width + paddingLeft + paddingRight);
+                currentX += (node.width + padding.Left + padding.Right);
         }
 
     }
