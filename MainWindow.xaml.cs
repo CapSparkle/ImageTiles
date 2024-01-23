@@ -39,10 +39,10 @@ namespace ImageTiles
             rootNode.AddLeaf(4);
 
             padding = new(
-                up: 5,
-                down: 10,
-                left: 7,
-                right: 15
+                up: 0,
+                down: 0,
+                left: 0,
+                right: 0
                 );
 
             bool verticalCompletion = false;

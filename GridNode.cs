@@ -10,7 +10,9 @@ namespace ImageTiles
     internal class GridNode
     {
         public int imageUid;
-        public int height, width;
+        public float height, width;
+
+        public GridNode parent;
         public List<GridNode> childs { get; } = new();
         public bool isLeaf { get { return imageUid > 0; } }
         public bool noBranchesInChilds
@@ -25,9 +27,10 @@ namespace ImageTiles
                 return true;
             }
         }
-        public GridNode(int imageUid = -1)
+        public GridNode(int imageUid = -1, GridNode parent = null)
         {
             this.imageUid = imageUid;
+            this.parent = parent;
         }
 
         public GridNode AddLeaf(int imageUid)
@@ -36,13 +39,13 @@ namespace ImageTiles
             {
                 throw new Exception("Cannot add child to leaf");
             }
-            childs.Add(new GridNode(imageUid));
+            childs.Add(new GridNode(imageUid, this));
             return this;
         }
 
         public GridNode AddBranch()
         {
-            var newNode = new GridNode();
+            var newNode = new GridNode(parent:this);
             childs.Add(newNode);
             return newNode;
         }
