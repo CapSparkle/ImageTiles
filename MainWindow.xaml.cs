@@ -34,9 +34,19 @@ namespace ImageTiles
             var br1 = rootNode.AddBranch();
             br1.AddLeaf(2);
             br1.AddLeaf(3);
+            var br2 = br1.AddBranch();
+            br2.AddLeaf(3);
+            br2.AddLeaf(3);
+            br2.AddLeaf(2);
+            br2.AddLeaf(5);
 
             rootNode.AddLeaf(5);
-            rootNode.AddLeaf(4);
+            var b3 = rootNode.AddBranch();
+            b3.AddLeaf(4);
+            var b4 = b3.AddBranch();
+            b4.AddLeaf(1);
+            b4.AddLeaf(5);
+            b4.AddLeaf(2);
 
             padding = new(
                 up: 0,

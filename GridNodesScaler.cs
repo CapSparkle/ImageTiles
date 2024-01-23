@@ -100,14 +100,8 @@ namespace ImageTiles
                     else
                         node.width = algoritmData[node].meanLength;
 
-                    float nodeLength = 0;
-                    AlignNode(verticalCompletion, ref nodeLength, node);
-
-                    if (verticalCompletion)
-                        node.width = nodeLength;
-                    else
-                        node.height = nodeLength;
-
+                    
+                    AlignNode(verticalCompletion, node);
 
                     algoritmData[node].alignmentDone = true;
 
@@ -124,25 +118,32 @@ namespace ImageTiles
             }
         }
 
-        public void AlignNode(bool verticalCompletion, ref float nodeLength, GridNode? node = null)
+        public void AlignNode(bool verticalCompletion, GridNode? node = null)
         {
+            float branchLength = 0;
             foreach (var child in node.childs)
             {
                 if (verticalCompletion)
                 {
                     child.width *= (node.height / child.height);
                     child.height = node.height;
-                    nodeLength += child.width;
+                    branchLength += child.width;
                 }
                 else
                 {
                     child.height *= (node.width / child.width);
                     child.width = node.width;
-                    nodeLength += child.height;
+                    branchLength += child.height;
                 }
                 if (!child.isLeaf)
-                    AlignNode(!verticalCompletion, ref nodeLength, child);
+                    AlignNode(!verticalCompletion, child);
             }
+
+            if (verticalCompletion)
+                node.width = branchLength;
+            else
+                node.height = branchLength;
+
         }
     }
 
