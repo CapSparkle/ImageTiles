@@ -55,11 +55,11 @@ namespace ImageTiles
             b3.AddLeaf(3);
 
             DrawStoryboard(
-                width: 400, 
-                paddingTop: 5, 
-                paddingRight: 10, 
-                paddingBottom: 15, 
-                paddingLeft: 20
+                width: 1920, 
+                paddingTop: 0, 
+                paddingRight: 0, 
+                paddingBottom: 0, 
+                paddingLeft: 0
             );
 
             

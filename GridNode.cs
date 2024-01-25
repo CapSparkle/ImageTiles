@@ -58,6 +58,22 @@ namespace ImageTiles
             Left = 0,
             Right = 0;
 
+        public int verticalSum
+        {
+            get 
+            {
+                return Up + Bottom;
+            }
+        }
+
+        public int horizontalSum
+        {
+            get
+            {
+                return Left + Right;
+            }
+        }
+
         public Padding(int up = 0, int down = 0, int left = 0, int right = 0)
         {
             Up = up;

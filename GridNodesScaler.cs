@@ -38,8 +38,8 @@ namespace ImageTiles
             if (node.isLeaf)
             {
                 var imgWH = imagesStore.GetWidthAndHeightOfImage(node.imageUid);
-                node.width = imgWH.Item1 / 20;
-                node.height = imgWH.Item2 / 20;
+                node.width = imgWH.Item1 + padding.horizontalSum;
+                node.height = imgWH.Item2 + padding.verticalSum;
             }
             else
             {
@@ -74,35 +74,24 @@ namespace ImageTiles
             {
                 ProcessNode(fillingTypeOfRootNode, rootNode);
             }
-            
-            rootNode.width = mainWidth;
 
+            rootNode.height *= (mainWidth / rootNode.width);
+            rootNode.width = mainWidth;
             AlignNode(fillingTypeOfRootNode, rootNode);
+
 
             AddPadding(rootNode, padding);
         }
 
         private void AddPadding(GridNode node, Padding padding)
         {
-            if (node.isLeaf)
-            { 
-             //   padding.Left + padding.Right
-                node.width -= (padding.Left + padding.Right);
-                node.height -= (padding.Up + padding.Bottom);
-            }
-            else
+            node.width -= padding.horizontalSum;
+            node.height -= padding.verticalSum;
+
+            foreach (var child in node.childs)
             {
-                node.width -= (padding.Left + padding.Right);
-                node.height -= (padding.Up + padding.Bottom);
-
-                foreach (var child in node.childs)
-                {
-                    AddPadding(child, padding);
-                }
+                AddPadding(child, padding);
             }
-            
-
-          
         }
 
         public void ProcessNode(bool verticalFilling, GridNode? node = null)
