@@ -75,20 +75,20 @@ namespace ImageTiles
                 right: paddingRight
                 );
 
-            bool verticalCompletion = false;
+            bool verticalFilling = false;
 
             scaler = new(
                 imagesStore: imagesStore,
                 rootNode: rootNode,
                 padding: padding,
-                mainLength: width,
-                verticalCompletion: verticalCompletion);
+                mainWidth: width,
+                verticalFilling: verticalFilling);
 
             drawer = new(
                 imagesStore,
                 startX: 0,
                 startY: 0,
-                verticalCompletion: verticalCompletion
+                verticalFilling: verticalFilling
                 );
         }
 

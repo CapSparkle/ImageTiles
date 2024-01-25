@@ -13,27 +13,27 @@ namespace ImageTiles
         public ImagesStore imagesStore { get; set; }
         public GridNode rootNode;
         public Padding padding;
-        public int mainLength;
-        public bool verticalCompletion;
+        public int mainWidth;
+        public bool verticalFilling;
 
-        public GridNodesScaler(ImagesStore imagesStore, GridNode rootNode, Padding padding, int mainLength, bool verticalCompletion)
+        public GridNodesScaler(ImagesStore imagesStore, GridNode rootNode, Padding padding, int mainWidth, bool verticalFilling)
         {
             this.imagesStore = imagesStore;
             this.rootNode = rootNode;
             this.padding = padding;
-            this.mainLength = mainLength;
-            this.verticalCompletion = verticalCompletion;
+            this.mainWidth = mainWidth;
+            this.verticalFilling = verticalFilling;
             SetDefaultScaleForTree(rootNode);
             AlignTree(rootNode);
         }
 
         public void SetDefaultScaleForTree(GridNode? rootNode = null)
         {
-            SetDefaultScaleForNode(!verticalCompletion, rootNode);
+            SetDefaultScaleForNode(!verticalFilling, rootNode);
             rootNode.width = rootNode.height = 0;
         }
 
-        void SetDefaultScaleForNode(bool verticalCompletion, GridNode? node = null)
+        void SetDefaultScaleForNode(bool verticalFilling, GridNode? node = null)
         {
             if (node.isLeaf)
             {
@@ -43,13 +43,13 @@ namespace ImageTiles
             }
             else
             {
-                bool verticalCompletionOfChild = !verticalCompletion;
+                bool verticalFillingOfChild = !verticalFilling;
                 foreach (var child in node.childs)
                 {
-                    SetDefaultScaleForNode(verticalCompletionOfChild, child);
+                    SetDefaultScaleForNode(verticalFillingOfChild, child);
                 }
 
-                if (!verticalCompletion)
+                if (!verticalFilling)
                 {
                     node.width = node.childs.Max(child => child.width);
                     node.height = 0;
@@ -69,39 +69,47 @@ namespace ImageTiles
             algoritmData = new();
             algoritmData[rootNode] = new AlignAlgoritmData(childsNumber: rootNode.childs.Count);
 
-            bool completionTypeOfRootNode = !verticalCompletion;
+            bool fillingTypeOfRootNode = !verticalFilling;
             while (algoritmData[rootNode].alignmentDone == false)
             {
-                ProcessNode(completionTypeOfRootNode, rootNode);
+                ProcessNode(fillingTypeOfRootNode, rootNode);
             }
+            
+            rootNode.width = mainWidth;
 
-            //scale
-            if (completionTypeOfRootNode)
-                rootNode.height = mainLength;
-            else
-                rootNode.height = mainLength;
-
-            AlignNode(completionTypeOfRootNode, rootNode);
+            AlignNode(fillingTypeOfRootNode, rootNode);
 
             AddPadding(rootNode, padding);
         }
 
-        private void AddPadding(GridNode rootNode, Padding padding)
+        private void AddPadding(GridNode node, Padding padding)
         {
-            rootNode.width -= (padding.Left + padding.Right);
-            rootNode.height -= (padding.Up + padding.Bottom);
+            if (node.isLeaf)
+            { 
+             //   padding.Left + padding.Right
+                node.width -= (padding.Left + padding.Right);
+                node.height -= (padding.Up + padding.Bottom);
+            }
+            else
+            {
+                node.width -= (padding.Left + padding.Right);
+                node.height -= (padding.Up + padding.Bottom);
 
-                foreach (var child in rootNode.childs)
+                foreach (var child in node.childs)
                 {
                     AddPadding(child, padding);
                 }
+            }
+            
+
+          
         }
 
-        public void ProcessNode(bool verticalCompletion, GridNode? node = null)
+        public void ProcessNode(bool verticalFilling, GridNode? node = null)
         {
             if (node.isLeaf && !algoritmData.ContainsKey(node))
             {
-                algoritmData[node.parent].AddValue(verticalCompletion ? node.width : node.height);
+                algoritmData[node.parent].AddValue(verticalFilling ? node.width : node.height);
                 algoritmData[node] = new AlignAlgoritmData(childsNumber: -1);
             }
             else if (!node.isLeaf)
@@ -116,35 +124,35 @@ namespace ImageTiles
                 }
                 else if (algoritmData[node].isMeanLengthCounted)
                 {
-                    if (verticalCompletion)
+                    if (verticalFilling)
                         node.height = algoritmData[node].meanLength;
                     else
                         node.width = algoritmData[node].meanLength;
 
                     
-                    AlignNode(verticalCompletion, node);
+                    AlignNode(verticalFilling, node);
 
                     algoritmData[node].alignmentDone = true;
 
                     if (node.parent != null)
-                        algoritmData[node.parent].AddValue(verticalCompletion ? node.width : node.height);
+                        algoritmData[node.parent].AddValue(verticalFilling ? node.width : node.height);
 
                     return;
                 }
 
                 foreach (var child in node.childs)
                 {
-                    ProcessNode(!verticalCompletion, child);
+                    ProcessNode(!verticalFilling, child);
                 }
             }
         }
 
-        public void AlignNode(bool verticalCompletion, GridNode? node = null)
+        public void AlignNode(bool verticalFilling, GridNode? node = null)
         {
             float branchLength = 0;
             foreach (var child in node.childs)
             {
-                if (verticalCompletion)
+                if (verticalFilling)
                 {
                     child.width *= (node.height / child.height);
                     child.height = node.height;
@@ -157,10 +165,10 @@ namespace ImageTiles
                     branchLength += child.height;
                 }
                 if (!child.isLeaf)
-                    AlignNode(!verticalCompletion, child);
+                    AlignNode(!verticalFilling, child);
             }
 
-            if (verticalCompletion)
+            if (verticalFilling)
                 node.width = branchLength;
             else
                 node.height = branchLength;

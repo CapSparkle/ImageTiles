@@ -13,20 +13,20 @@ namespace ImageTiles
         private readonly ImagesStore imagesStore;
 
         int startX, startY;
-        bool verticalCompletion = false;
+        bool verticalFilling = false;
 
         Padding padding; 
 
         public GridDrawer(ImagesStore imagesStore,
             int startX,
             int startY, 
-            bool verticalCompletion
+            bool verticalFilling
             )
         {
             this.imagesStore = imagesStore;
             this.startX = startX;
             this.startY = startY;
-            this.verticalCompletion = verticalCompletion;
+            this.verticalFilling = verticalFilling;
         }
 
         public void DrawImageGrid(SKCanvas canvas, GridNode rootNode, Padding padding)
@@ -35,14 +35,14 @@ namespace ImageTiles
             float currentX = startX,
                 currentY = startY;
 
-            DrawImageNode(canvas, rootNode, ref currentX, ref currentY, !verticalCompletion);    
+            DrawImageNode(canvas, rootNode, ref currentX, ref currentY, !verticalFilling);    
         }
 
-        void DrawImageNode(SKCanvas canvas, GridNode node, ref float currentX, ref float currentY, bool verticalCompletion)
+        void DrawImageNode(SKCanvas canvas, GridNode node, ref float currentX, ref float currentY, bool verticalFilling)
         {
             if (node.isLeaf) 
             {
-                DrawImage(canvas, node, ref currentX, ref currentY, verticalCompletion);
+                DrawImage(canvas, node, ref currentX, ref currentY, verticalFilling);
             }
             else
             {
@@ -50,20 +50,20 @@ namespace ImageTiles
                 float newX = currentX,
                     newY = currentY;
 
-                if (verticalCompletion)
+                if (verticalFilling)
                     currentY += (node.height + padding.Up + padding.Bottom);
                 else
                     currentX += (node.width + padding.Left + padding.Right);
 
-                verticalCompletion = !verticalCompletion;
+                verticalFilling = !verticalFilling;
                 foreach (var child in node.childs)
                 {
-                    DrawImageNode(canvas, child, ref newX, ref newY, verticalCompletion);
+                    DrawImageNode(canvas, child, ref newX, ref newY, verticalFilling);
                 }
             }
         }
 
-        void DrawImage(SKCanvas canvas, GridNode node, ref float currentX, ref float currentY, bool verticalCompletion)
+        void DrawImage(SKCanvas canvas, GridNode node, ref float currentX, ref float currentY, bool verticalFilling)
         {
             int imgUidToDraw = node.imageUid;
             if (node.imageUid <= 0)
@@ -84,7 +84,7 @@ namespace ImageTiles
 
             
 
-            if (verticalCompletion)
+            if (verticalFilling)
             {
                 currentY += (node.height + padding.Up + padding.Bottom);
             }
