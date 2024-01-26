@@ -149,6 +149,9 @@ namespace ImageTiles
             float branchLength = 0;
             foreach (var child in node.childs)
             {
+                if (!child.isLeaf)
+                    AlignNode(!verticalFilling, child);
+
                 if (verticalFilling)
                 {
                     float childAspectRatioFlipped = child.GetAspectRatioFlipped();
@@ -185,15 +188,12 @@ namespace ImageTiles
 
                     branchLength += child.height;
                 }
-                if (!child.isLeaf)
-                    AlignNode(!verticalFilling, child);
             }
 
             if (verticalFilling)
                 node.width = branchLength;
             else
                 node.height = branchLength;
-
         }
     }
 }
