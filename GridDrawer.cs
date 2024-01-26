@@ -51,9 +51,9 @@ namespace ImageTiles
                     newY = currentY;
 
                 if (verticalFilling)
-                    currentY += (node.height + padding.Up + padding.Bottom);
+                    currentY += (node.height + padding.verticalSum);
                 else
-                    currentX += (node.width + padding.Left + padding.Right);
+                    currentX += (node.width + padding.horizontalSum);
 
                 verticalFilling = !verticalFilling;
                 foreach (var child in node.childs)
@@ -86,10 +86,10 @@ namespace ImageTiles
 
             if (verticalFilling)
             {
-                currentY += (node.height + padding.Up + padding.Bottom);
+                currentY += (node.height + padding.horizontalSum);
             }
             else
-                currentX += (node.width + padding.Left + padding.Right);
+                currentX += (node.width + padding.verticalSum);
         }
 
     }

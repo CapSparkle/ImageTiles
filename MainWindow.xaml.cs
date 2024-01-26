@@ -57,9 +57,9 @@ namespace ImageTiles
             DrawStoryboard(
                 width: 1000, 
                 paddingTop: 5, 
-                paddingRight: 7, 
-                paddingBottom: 10, 
-                paddingLeft: 15
+                paddingRight: 5, 
+                paddingBottom: 5, 
+                paddingLeft: 5
             );
 
             
