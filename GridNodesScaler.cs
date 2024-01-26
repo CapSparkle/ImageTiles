@@ -38,8 +38,8 @@ namespace ImageTiles
             if (node.isLeaf)
             {
                 var imgWH = imagesStore.GetWidthAndHeightOfImage(node.imageUid);
-                node.width = imgWH.Item1 + padding.horizontalSum;
-                node.height = imgWH.Item2 + padding.verticalSum;
+                node.width = imgWH.Item1;
+                node.height = imgWH.Item2;
             }
             else
             {
@@ -49,15 +49,16 @@ namespace ImageTiles
                     SetDefaultScaleForNode(verticalFillingOfChild, child);
                 }
 
+                node.width = node.childs.Sum(child => child.width);
+                node.height = node.childs.Sum(child => child.height);
+
                 if (!verticalFilling)
                 {
-                    node.width = node.childs.Max(child => child.width);
-                    node.height = 0;
+                    node.width /= node.childs.Count();
                 }
                 else
                 {
-                    node.height = node.childs.Max(child => child.height);
-                    node.width = 0;
+                    node.height /= node.childs.Count();
                 }
             }
         }
@@ -78,9 +79,6 @@ namespace ImageTiles
             rootNode.height *= (mainWidth / rootNode.width);
             rootNode.width = mainWidth;
             AlignNode(fillingTypeOfRootNode, rootNode);
-
-
-            AddPadding(rootNode, padding);
         }
 
         private void AddPadding(GridNode node, Padding padding)
@@ -143,14 +141,38 @@ namespace ImageTiles
             {
                 if (verticalFilling)
                 {
-                    child.width *= (node.height / child.height);
-                    child.height = node.height;
+                    float childAspectRatioFlipped = child.GetAspectRatioFlipped();
+                    float targetHeightWithPadding = node.height + padding.verticalSum;
+                    child.height =
+                        (float)Math.Clamp(
+                            targetHeightWithPadding
+                            - (child.isLeaf ? 1 : child.childs.Count)
+                            * padding.verticalSum,
+                            0.1,
+                            double.MaxValue);
+
+                    child.width =
+                        child.height
+                        * childAspectRatioFlipped;
+
                     branchLength += child.width;
                 }
                 else
                 {
-                    child.height *= (node.width / child.width);
-                    child.width = node.width;
+                    float childAspectRatio = child.GetAspectRatio();
+                    float targetWidthWithPadding = node.width + padding.horizontalSum;
+                    child.width =
+                        (float)Math.Clamp(
+                            targetWidthWithPadding
+                            - (child.isLeaf ? 1 : child.childs.Count)
+                            * padding.horizontalSum,
+                            0.1,
+                            double.MaxValue);
+
+                    child.height =
+                        child.width
+                        * childAspectRatio;
+
                     branchLength += child.height;
                 }
                 if (!child.isLeaf)

@@ -27,6 +27,17 @@ namespace ImageTiles
                 return true;
             }
         }
+
+        public float GetAspectRatio()
+        {
+            return height / width;
+        }
+
+        public float GetAspectRatioFlipped()
+        {
+            return width / height;
+        }
+
         public GridNode(int imageUid = -1, GridNode parent = null)
         {
             this.imageUid = imageUid;
