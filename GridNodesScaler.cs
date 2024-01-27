@@ -38,8 +38,8 @@ namespace ImageTiles
             if (node.isLeaf)
             {
                 var imgWH = imagesStore.GetWidthAndHeightOfImage(node.imageUid);
-                node.width = imgWH.Item1 / 20;
-                node.height = imgWH.Item2 / 20;
+                node.width = imgWH.Item1;
+                node.height = imgWH.Item2;
             }
             else
             {
@@ -79,8 +79,7 @@ namespace ImageTiles
             rootNode.ScaleByWidth(targetWidth);
 
             int treeDepth = rootNode.GetDepth();
-            treeDepth++;
-            for (int i = 0; i < treeDepth; i++)
+            for (int i = 0; i < treeDepth + 1; i++)
                 AlignNode(fillingTypeOfRootNode, rootNode);
         }
 
@@ -101,11 +100,6 @@ namespace ImageTiles
             double branchLength = 0;
             foreach (var child in node.childs)
             {
-                
-
-                if (!child.isLeaf)
-                    AlignNode(!verticalFilling, child);
-
                 if (verticalFilling)
                 {
                     double targetHeight =
@@ -134,25 +128,15 @@ namespace ImageTiles
 
                     branchLength += child.height;
                 }
+
+                if (!child.isLeaf)
+                    AlignNode(!verticalFilling, child);
             }
 
             if (verticalFilling)
                 node.width = branchLength;
             else
                 node.height = branchLength;
-
-
-
-            if (verticalFilling && (node.width != node.childs.Sum(child => child.width)))
-            {
-                var w = node.width;
-                var cSW = node.childs.Sum(child => child.width);
-            }
-            if (!verticalFilling && (node.height != node.childs.Sum(child => child.height)))
-            {
-                var h = node.height;
-                var cSH = node.childs.Sum(child => child.height);
-            }
         }
     }
 }

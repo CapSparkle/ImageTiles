@@ -68,7 +68,6 @@ namespace ImageTiles
             int imgUidToDraw = node.imageUid;
             if (node.imageUid <= 0)
                 imgUidToDraw = 1;
-            //add img filler
 
             var image = imagesStore.GetImage(imgUidToDraw);
             if (image != null)
@@ -86,10 +85,10 @@ namespace ImageTiles
 
             if (verticalFilling)
             {
-                currentY += (node.height + padding.horizontalSum);
+                currentY += (node.height + padding.verticalSum);
             }
             else
-                currentX += (node.width + padding.verticalSum);
+                currentX += (node.width + padding.horizontalSum);
         }
 
     }

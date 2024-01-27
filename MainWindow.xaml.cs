@@ -44,6 +44,10 @@ namespace ImageTiles
             var b21 = b2.AddBranch();
             b21.AddLeaf(7);
             b21.AddLeaf(6);
+            var b22 = b2.AddBranch();
+            b22.AddLeaf(1);
+            b22.AddLeaf(2);
+            b22.AddLeaf(3);
             var b211 = b21.AddBranch();
             b211.AddLeaf(2);
             b211.AddLeaf(5);
@@ -58,10 +62,10 @@ namespace ImageTiles
 
             DrawStoryboard(
                 width: 1000, 
-                paddingTop: 5, 
+                paddingTop: 1, 
                 paddingRight: 5, 
-                paddingBottom: 5, 
-                paddingLeft: 5
+                paddingBottom: 15, 
+                paddingLeft: 7
             );
 
             
