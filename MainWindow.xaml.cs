@@ -53,6 +53,8 @@ namespace ImageTiles
             var b3 = rootNode.AddBranch();
             b3.AddLeaf(1);
             b3.AddLeaf(3);
+            b3.AddLeaf(5);
+            b21.AddLeaf(6);
 
             DrawStoryboard(
                 width: 1000, 
