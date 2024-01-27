@@ -12,6 +12,21 @@ namespace ImageTiles
         public int imageUid;
         public double height, width;
 
+        public void ScaleByHeight(double newHeight)
+        {
+            width = (width / height) * newHeight;
+            height = newHeight;
+        }
+
+        public void ScaleByWidth(double newWidth)
+        {
+            height = (height / width) * newWidth;
+            width = newWidth;
+        }
+
+        //public double aspectRatio { get; private set;}
+        //public double aspectRatioFlipped { get; private set; }
+
         public GridNode parent;
         public List<GridNode> childs { get; } = new();
         public bool isLeaf { get { return imageUid > 0; } }
@@ -59,6 +74,23 @@ namespace ImageTiles
             var newNode = new GridNode(parent:this);
             childs.Add(newNode);
             return newNode;
+        }
+
+        public int GetDepth()
+        {
+            if (isLeaf)
+            {
+                return 0;
+            }
+
+            int maxDepth = 0;
+            foreach (var child in childs)
+            {
+                int childDepth = child.GetDepth();
+                maxDepth = Math.Max(maxDepth, childDepth);
+            }
+
+            return maxDepth + 1;
         }
     }
 

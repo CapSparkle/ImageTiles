@@ -61,13 +61,18 @@ namespace ImageTiles
 
         public async Task ScaleChange(GridNode node, Action redraw)
         {
+            double defaultWidth = node.width,
+                defaultHeight = node.height;
+
+
             float scaleFactor = 1;
             while (true) 
             {
                 redraw();
                 scaleFactor += 0.2f;
-                //scaleFactor = 1
-                //    f + (scaleFactor % 1.8f);
+                scaleFactor %= 1.8f;
+                node.height = defaultHeight * scaleFactor;
+                node.width = defaultWidth * scaleFactor;
                 ScaleNode(false, scaleFactor, node);
                 await Task.Delay(1500);
             }

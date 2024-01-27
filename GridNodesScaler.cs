@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OpenTK.Graphics.ES11;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -66,22 +67,21 @@ namespace ImageTiles
         {
             bool fillingTypeOfRootNode = !verticalFilling;
 
-            double rootNodeAspectRatio = rootNode.GetAspectRatio();
-            double targetWidthWithPadding = mainWidth;
-            rootNode.width =
-                (float)Math.Clamp(
-                    targetWidthWithPadding
+            double targetWidth =
+                Math.Clamp(
+                    mainWidth
                     - rootNode.childs.Count
                     * padding.horizontalSum,
                     0.1,
                     double.MaxValue);
 
-            rootNode.height =
-                rootNode.width
-                * rootNodeAspectRatio;
 
+            rootNode.ScaleByWidth(targetWidth);
 
-            AlignNode(fillingTypeOfRootNode, rootNode);
+            int treeDepth = rootNode.GetDepth();
+            treeDepth++;
+            for (int i = 0; i < treeDepth; i++)
+                AlignNode(fillingTypeOfRootNode, rootNode);
         }
 
         private void AddPadding(GridNode node, Padding padding)
@@ -95,106 +95,64 @@ namespace ImageTiles
             }
         }
 
-        //public void ProcessNode(bool verticalFilling, GridNode? node = null)
-        //{
-        //    if (node.isLeaf && !algoritmData.ContainsKey(node))
-        //    {
-        //        algoritmData[node.parent].AddValue(verticalFilling ? node.width : node.height);
-        //        algoritmData[node] = new AlignAlgoritmData(childsNumber: -1);
-        //    }
-        //    else if (!node.isLeaf)
-        //    {
-        //        if (!algoritmData.ContainsKey(node))
-        //        {
-        //            algoritmData[node] = new AlignAlgoritmData(childsNumber: node.childs.Count);
-        //        }
-        //        else if (algoritmData[node].alignmentDone)
-        //        {
-        //            return;
-        //        }
-        //        else if (algoritmData[node].isMeanLengthCounted)
-        //        {
-        //            if (verticalFilling)
-        //                node.height = algoritmData[node].meanLength;
-        //            else
-        //                node.width = algoritmData[node].meanLength;
-
-                    
-        //            AlignNode(verticalFilling, node);
-
-        //            algoritmData[node].alignmentDone = true;
-
-        //            //if (node.parent != null)
-        //            //{
-        //            //    algoritmData[node.parent].AddValue(
-        //            //        verticalFilling ? 
-        //            //        (node.width + (node.childs.Count - 1) * padding.horizontalSum) 
-        //            //        :
-        //            //        (node.height + (node.childs.Count - 1) * padding.verticalSum));
-        //            //}
-                        
-
-        //            return;
-        //        }
-
-        //        foreach (var child in node.childs)
-        //        {
-        //            ProcessNode(!verticalFilling, child);
-        //        }
-        //    }
-        //}
 
         public void AlignNode(bool verticalFilling, GridNode? node = null)
         {
             double branchLength = 0;
             foreach (var child in node.childs)
             {
+                
+
+                if (!child.isLeaf)
+                    AlignNode(!verticalFilling, child);
+
                 if (verticalFilling)
                 {
-                    double childAspectRatioFlipped = child.GetAspectRatioFlipped();
-                    double targetHeightWithPadding = node.height + padding.verticalSum;
-                    child.height =
-                        (double)Math.Clamp(
-                            targetHeightWithPadding
-                            - (child.isLeaf ? 1 : child.childs.Count)
-                            * padding.verticalSum,
+                    double targetHeight =
+                        Math.Clamp(
+                            node.height
+                            + padding.verticalSum
+                            - (child.isLeaf ? 1 : child.childs.Count) * padding.verticalSum,
                             0.1,
                             double.MaxValue);
 
-                    child.width =
-                        child.height
-                        * childAspectRatioFlipped;
+                    child.ScaleByHeight(targetHeight);
 
                     branchLength += child.width;
                 }
                 else
                 {
-                    double childAspectRatio = child.GetAspectRatio();
-                    double targetWidthWithPadding = node.width + padding.horizontalSum;
-
-                    child.width =
+                    double targetWidth =
                         Math.Clamp(
-                            targetWidthWithPadding
-                            - (child.isLeaf ? 1 : child.childs.Count)
-                            * padding.horizontalSum,
+                            node.width
+                            + padding.horizontalSum
+                            - (child.isLeaf ? 1 : child.childs.Count) * padding.horizontalSum,
                             0.1,
                             double.MaxValue);
 
-                    child.height =
-                        child.width
-                        * childAspectRatio;
+                    child.ScaleByWidth(targetWidth);
 
                     branchLength += child.height;
                 }
-
-                if (!child.isLeaf)
-                    AlignNode(!verticalFilling, child);
             }
 
             if (verticalFilling)
                 node.width = branchLength;
             else
                 node.height = branchLength;
+
+
+
+            if (verticalFilling && (node.width != node.childs.Sum(child => child.width)))
+            {
+                var w = node.width;
+                var cSW = node.childs.Sum(child => child.width);
+            }
+            if (!verticalFilling && (node.height != node.childs.Sum(child => child.height)))
+            {
+                var h = node.height;
+                var cSH = node.childs.Sum(child => child.height);
+            }
         }
     }
 }
