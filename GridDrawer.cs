@@ -32,13 +32,13 @@ namespace ImageTiles
         public void DrawImageGrid(SKCanvas canvas, GridNode rootNode, Padding padding)
         {
             this.padding = padding;
-            float currentX = startX,
+            double currentX = startX,
                 currentY = startY;
 
             DrawImageNode(canvas, rootNode, ref currentX, ref currentY, !verticalFilling);    
         }
 
-        void DrawImageNode(SKCanvas canvas, GridNode node, ref float currentX, ref float currentY, bool verticalFilling)
+        void DrawImageNode(SKCanvas canvas, GridNode node, ref double currentX, ref double currentY, bool verticalFilling)
         {
             if (node.isLeaf) 
             {
@@ -47,7 +47,7 @@ namespace ImageTiles
             else
             {
 
-                float newX = currentX,
+                double newX = currentX,
                     newY = currentY;
 
                 if (verticalFilling)
@@ -63,7 +63,7 @@ namespace ImageTiles
             }
         }
 
-        void DrawImage(SKCanvas canvas, GridNode node, ref float currentX, ref float currentY, bool verticalFilling)
+        void DrawImage(SKCanvas canvas, GridNode node, ref double currentX, ref double currentY, bool verticalFilling)
         {
             int imgUidToDraw = node.imageUid;
             if (node.imageUid <= 0)
@@ -74,10 +74,10 @@ namespace ImageTiles
             if (image != null)
             {
                 canvas.DrawImage(image, new SKRect(
-                    currentX + padding.Left, 
-                    currentY + padding.Up, 
-                    currentX + padding.Left + node.width, 
-                    currentY + padding.Up + node.height));
+                    (float)(currentX + padding.Left), 
+                    (float)(currentY + padding.Up),
+                    (float)(currentX + padding.Left + node.width),
+                    (float)(currentY + padding.Up + node.height)));
 
                 image.Dispose();
             }

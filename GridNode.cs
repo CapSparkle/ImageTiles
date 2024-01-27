@@ -10,7 +10,7 @@ namespace ImageTiles
     internal class GridNode
     {
         public int imageUid;
-        public float height, width;
+        public double height, width;
 
         public GridNode parent;
         public List<GridNode> childs { get; } = new();
@@ -28,12 +28,12 @@ namespace ImageTiles
             }
         }
 
-        public float GetAspectRatio()
+        public double GetAspectRatio()
         {
             return height / width;
         }
 
-        public float GetAspectRatioFlipped()
+        public double GetAspectRatioFlipped()
         {
             return width / height;
         }

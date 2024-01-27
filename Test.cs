@@ -81,10 +81,10 @@ namespace ImageTiles
             }
             else
             {
-                float nodeAspectRatio = node.height / node.width;
-                float targetWidthWithPadding = (node.width + node.childs.Count * padding.horizontalSum) * scaleFactor;
-                float targetHeight =
-                    (float)(Math.Clamp((targetWidthWithPadding - node.childs.Count * padding.horizontalSum), 1, double.MaxValue)
+                double nodeAspectRatio = node.height / node.width;
+                double targetWidthWithPadding = (node.width + node.childs.Count * padding.horizontalSum) * scaleFactor;
+                double targetHeight =
+                    (Math.Clamp((targetWidthWithPadding - node.childs.Count * padding.horizontalSum), 1, double.MaxValue)
                     * nodeAspectRatio);
 
                 node.height = targetHeight;

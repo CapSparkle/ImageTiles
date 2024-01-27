@@ -37,8 +37,8 @@ namespace ImageTiles
             if (node.isLeaf)
             {
                 var imgWH = imagesStore.GetWidthAndHeightOfImage(node.imageUid);
-                node.width = imgWH.Item1;
-                node.height = imgWH.Item2;
+                node.width = imgWH.Item1 / 20;
+                node.height = imgWH.Item2 / 20;
             }
             else
             {
@@ -66,8 +66,8 @@ namespace ImageTiles
         {
             bool fillingTypeOfRootNode = !verticalFilling;
 
-            float rootNodeAspectRatio = rootNode.GetAspectRatio();
-            float targetWidthWithPadding = mainWidth;
+            double rootNodeAspectRatio = rootNode.GetAspectRatio();
+            double targetWidthWithPadding = mainWidth;
             rootNode.width =
                 (float)Math.Clamp(
                     targetWidthWithPadding
@@ -146,18 +146,15 @@ namespace ImageTiles
 
         public void AlignNode(bool verticalFilling, GridNode? node = null)
         {
-            float branchLength = 0;
+            double branchLength = 0;
             foreach (var child in node.childs)
             {
-                if (!child.isLeaf)
-                    AlignNode(!verticalFilling, child);
-
                 if (verticalFilling)
                 {
-                    float childAspectRatioFlipped = child.GetAspectRatioFlipped();
-                    float targetHeightWithPadding = node.height + padding.verticalSum;
+                    double childAspectRatioFlipped = child.GetAspectRatioFlipped();
+                    double targetHeightWithPadding = node.height + padding.verticalSum;
                     child.height =
-                        (float)Math.Clamp(
+                        (double)Math.Clamp(
                             targetHeightWithPadding
                             - (child.isLeaf ? 1 : child.childs.Count)
                             * padding.verticalSum,
@@ -172,10 +169,11 @@ namespace ImageTiles
                 }
                 else
                 {
-                    float childAspectRatio = child.GetAspectRatio();
-                    float targetWidthWithPadding = node.width + padding.horizontalSum;
+                    double childAspectRatio = child.GetAspectRatio();
+                    double targetWidthWithPadding = node.width + padding.horizontalSum;
+
                     child.width =
-                        (float)Math.Clamp(
+                        Math.Clamp(
                             targetWidthWithPadding
                             - (child.isLeaf ? 1 : child.childs.Count)
                             * padding.horizontalSum,
@@ -188,6 +186,9 @@ namespace ImageTiles
 
                     branchLength += child.height;
                 }
+
+                if (!child.isLeaf)
+                    AlignNode(!verticalFilling, child);
             }
 
             if (verticalFilling)
